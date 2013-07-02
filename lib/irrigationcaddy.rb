@@ -66,7 +66,8 @@ module IrrigationCaddy
 		end
 
 		def program(n)
-			get('/js/indexVarsDyn.js', { :program => n })
+			# this op does not return proper Content-Type, plus the body is a chunk of JavaScript to boot
+			Controller.parse_js(get('/js/indexVarsDyn.js', { :program => n }).body)
 		end
 
 		def alive?
@@ -120,6 +121,10 @@ module IrrigationCaddy
 		class << self
 			def parse_time(dt)
 				Time.new((dt['year'] || 0) + 2000, dt['month'], dt['date'], dt['hr'], dt['min'], dt['sec'])
+			end
+
+			def parse_js(str)
+				JSON.parse(str.sub(/^\s*var\s*[^\s]+\s*=\s*/, '').gsub(/(\w+)(\s*:)/, '"\1"\2').gsub(/'([^']+)'/, '"\1"'))
 			end
 
 			def local_ip_addresses

@@ -5,6 +5,35 @@ describe IrrigationCaddy::Controller do
 		@host = "192.168.1.#{Random.rand(0..255)}".freeze
 	end
 
+	describe '#parse_js' do
+		it 'should clean-up a chunk of JS response' do
+			js = <<-JS
+var iv = {
+	progNumber : '1',
+	progAllowRun : 1,
+	days : [1,1,0,1,1,1,1],
+	progStartTimeHr : [7,8,12,12,12],
+	progStartTimeMin : [0,0,0,0,0],
+	isAM : [1,0,1,1,1],
+	zNames : ["Backyard Lawn Left","Backyard Lawn Right","Backyard Perimeter","Front Lawn Close","Front Lawn Far","Backyard Trees By Fence","Trees by Tunbridge","Raised bed on Tunbridge","Driveway Trees",""],
+	maxZRunTime : 60,
+	maxZones : 10,
+	zDur : [{hr:0, min:10},{hr:0, min:10},{hr:0, min:10},{hr:0, min:10},{hr:0, min:10},{hr:0, min:10},{hr:0, min:10},{hr:0, min:0},{hr:0, min:10},{hr:0, min:0}],
+	everyNDays : 1,
+	evenOdd : 2,
+	maxProgs : 3,
+	startTimesStatus : [0, 0, 0, 0],
+	hostname : 'IRRIGATIONCADDY',
+	ipAddress : '192.168.3.70'
+}
+JS
+			parsed = IrrigationCaddy::Controller.parse_js(js)
+			parsed.should be_an_instance_of(Hash)
+			parsed.should have_key('progNumber')
+			parsed.should have_key('ipAddress')
+		end
+	end
+
 	describe '#initialize' do
 		it 'should return a blank instance' do
 			IrrigationCaddy::Controller.new.to_s.should be_empty
