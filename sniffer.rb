@@ -14,5 +14,7 @@ caddies.each_with_index do |caddy, i|
 
 	puts "Current Calendar:\n#{JSON.pretty_generate(caddy.calendar)}"
 
-	puts "Program #1:\n#{JSON.pretty_generate(caddy.program(1))}"
+	(1..3).each do |prog|
+		puts "Program ##{prog}:\n#{JSON.pretty_generate(caddy.program(prog))}"
+	end
 end
